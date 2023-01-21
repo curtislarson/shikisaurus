@@ -1,0 +1,8 @@
+export const snapshot = {};
+
+snapshot[`main > run and query urls 1`] = `'<pre class="shiki" style="background-color: #282A36"><code><span class="line"><span style="color: #F8F8F2">console.</span><span style="color: #50FA7B">log</span><span style="color: #F8F8F2">(</span><span style="color: #E9F284">&quot;</span><span style="color: #F1FA8C">hello world</span><span style="color: #E9F284">&quot;</span><span style="color: #F8F8F2">);</span></span></code></pre>'`;
+
+snapshot[`main > run and query urls 2`] = `
+'<pre class="shiki" style="background-color: #282A36"><code><span class="line"><span style="color: #F8F8F2">end_of_line </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> lf</span></span>
+<span class="line"><span style="color: #F8F8F2">insert_final_newline </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> </span><span style="color: #BD93F9">true</span></span></code></pre>'
+`;

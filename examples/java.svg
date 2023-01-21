@@ -1,0 +1,295 @@
+<svg viewBox="0 0 1080 2184" width="1080" height="2184" xmlns="http://www.w3.org/2000/svg">
+<rect id="bg" fill="#000" width="1080" height="2184" rx="4"></rect><g id="tokens" transform="translate(40, 39)"><text font-family="Fira Code" font-size="16" y="19.5">
+<tspan x="0" fill="#FF79C6">package</tspan><tspan x="70" fill="#F8F8F2"> </tspan><tspan x="80" fill="#FF79C6">org.apache.flink.api.connector.sink2</tspan><tspan x="440" fill="#F8F8F2">;</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="58.5">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">org.apache.flink.annotation.Experimental;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="78">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">org.apache.flink.annotation.PublicEvolving;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="97.5">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">org.apache.flink.api.common.operators.MailboxExecutor;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="117">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">org.apache.flink.api.common.operators.ProcessingTimeService;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="136.5">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">org.apache.flink.api.common.serialization.SerializationSchema;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="156">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">org.apache.flink.metrics.groups.SinkWriterMetricGroup;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="175.5">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">org.apache.flink.util.UserCodeClassLoader;</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="214.5">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">java.io.IOException;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="234">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">java.io.Serializable;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="253.5">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">java.util.Optional;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="273">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">java.util.OptionalLong;</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="292.5">
+<tspan x="0" fill="#FF79C6">import</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#F8F8F2">java.util.function.Consumer;</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="331.5">
+<tspan x="0" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="351">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">* Base interface for developing a sink. A basic {@link Sink} is a stateless sink that can flush</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="370.5">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">* data on checkpoint to achieve at-least-once consistency. Sinks with additional requirements</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="390">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">* should implement {@link StatefulSink} or {@link TwoPhaseCommittingSink}.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="409.5">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">*</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="429">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">* &lt;p&gt;The {@link Sink} needs to be serializable. All configuration should be validated eagerly. The</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="448.5">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">* respective sink writers are transient and will only be created in the subtasks on the</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="468">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">* taskmanagers.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="487.5">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">*</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="507">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">* </tspan><tspan x="30" fill="#FF79C6">@param</tspan><tspan x="90" fill="#6272A4"> </tspan><tspan x="100" fill="#FFB86C" font-style="italic">&lt;InputT&gt;</tspan><tspan x="180" fill="#6272A4"> </tspan><tspan x="190" fill="#6272A4">The type of the sink&#39;s input</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="526.5">
+<tspan x="0" fill="#6272A4"> </tspan><tspan x="10" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="546">
+<tspan x="0" fill="#F8F8F2">@</tspan><tspan x="10" fill="#8BE9FD" font-style="italic">PublicEvolving</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="565.5">
+<tspan x="0" fill="#FF79C6">public</tspan><tspan x="60" fill="#F8F8F2"> </tspan><tspan x="70" fill="#FF79C6">interface</tspan><tspan x="160" fill="#F8F8F2"> </tspan><tspan x="170" fill="#8BE9FD">Sink</tspan><tspan x="210" fill="#F8F8F2">&lt;InputT&gt; </tspan><tspan x="300" fill="#FF79C6">extends</tspan><tspan x="370" fill="#F8F8F2"> </tspan><tspan x="380" fill="#8BE9FD" font-style="italic">Serializable</tspan><tspan x="500" fill="#F8F8F2"> </tspan><tspan x="510" fill="#F8F8F2">{</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="604.5">
+<tspan x="0" fill="#6272A4">    </tspan><tspan x="40" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="624">
+<tspan x="0" fill="#6272A4">     </tspan><tspan x="50" fill="#6272A4">* Creates a {@link SinkWriter}.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="643.5">
+<tspan x="0" fill="#6272A4">     </tspan><tspan x="50" fill="#6272A4">*</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="663">
+<tspan x="0" fill="#6272A4">     </tspan><tspan x="50" fill="#6272A4">* </tspan><tspan x="70" fill="#FF79C6">@param</tspan><tspan x="130" fill="#6272A4"> </tspan><tspan x="140" fill="#FFB86C" font-style="italic">context</tspan><tspan x="210" fill="#6272A4"> </tspan><tspan x="220" fill="#6272A4">the runtime context.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="682.5">
+<tspan x="0" fill="#6272A4">     </tspan><tspan x="50" fill="#6272A4">* </tspan><tspan x="70" fill="#FF79C6">@return</tspan><tspan x="140" fill="#6272A4"> </tspan><tspan x="150" fill="#6272A4">A sink writer.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="702">
+<tspan x="0" fill="#6272A4">     </tspan><tspan x="50" fill="#6272A4">* </tspan><tspan x="70" fill="#FF79C6">@throws</tspan><tspan x="140" fill="#6272A4"> </tspan><tspan x="150" fill="#8BE9FD">IOException</tspan><tspan x="260" fill="#6272A4"> </tspan><tspan x="270" fill="#6272A4">for any failure during creation.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="721.5">
+<tspan x="0" fill="#6272A4">     </tspan><tspan x="50" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="741">
+<tspan x="0" fill="#F8F8F2">    </tspan><tspan x="40" fill="#8BE9FD" font-style="italic">SinkWriter</tspan><tspan x="140" fill="#F8F8F2">&lt;InputT&gt; </tspan><tspan x="230" fill="#50FA7B">createWriter</tspan><tspan x="350" fill="#F8F8F2">(</tspan><tspan x="360" fill="#8BE9FD" font-style="italic">InitContext</tspan><tspan x="470" fill="#F8F8F2"> </tspan><tspan x="480" fill="#FFB86C" font-style="italic">context</tspan><tspan x="550" fill="#F8F8F2">) </tspan><tspan x="570" fill="#FF79C6">throws</tspan><tspan x="630" fill="#F8F8F2"> </tspan><tspan x="640" fill="#8BE9FD" font-style="italic">IOException</tspan><tspan x="750" fill="#F8F8F2">;</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="780">
+<tspan x="0" fill="#6272A4">    </tspan><tspan x="40" fill="#6272A4">/** The interface exposes some runtime info for creating a {@link SinkWriter}. */</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="799.5">
+<tspan x="0" fill="#F8F8F2">    </tspan><tspan x="40" fill="#F8F8F2">@</tspan><tspan x="50" fill="#8BE9FD" font-style="italic">PublicEvolving</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="819">
+<tspan x="0" fill="#F8F8F2">    </tspan><tspan x="40" fill="#FF79C6">interface</tspan><tspan x="130" fill="#F8F8F2"> </tspan><tspan x="140" fill="#8BE9FD">InitContext</tspan><tspan x="250" fill="#F8F8F2"> </tspan><tspan x="260" fill="#F8F8F2">{</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="838.5">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="858">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* The first checkpoint id when an application is started and not recovered from a</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="877.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* previously taken checkpoint or savepoint.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="897">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="916.5">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">long</tspan><tspan x="120" fill="#F8F8F2"> </tspan><tspan x="130" fill="#F8F8F2">INITIAL_CHECKPOINT_ID </tspan><tspan x="350" fill="#FF79C6">=</tspan><tspan x="360" fill="#F8F8F2"> </tspan><tspan x="370" fill="#BD93F9">1</tspan><tspan x="380" fill="#F8F8F2">;</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="955.5">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="975">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* Gets the {@link UserCodeClassLoader} to load classes that are not in system&#39;s classpath,</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="994.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* but are part of the jar file of a user job.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1014">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1033.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* </tspan><tspan x="110" fill="#FF79C6">@see</tspan><tspan x="150" fill="#6272A4"> </tspan><tspan x="160" fill="#6272A4">UserCodeClassLoader</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1053">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1072.5">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">UserCodeClassLoader</tspan><tspan x="270" fill="#F8F8F2"> </tspan><tspan x="280" fill="#50FA7B">getUserCodeClassLoader</tspan><tspan x="500" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1111.5">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1131">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* Returns the mailbox executor that allows to execute {@link Runnable}s inside the task</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1150.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* thread in between record processing.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1170">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1189.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* &lt;p&gt;Note that this method should not be used per-record for performance reasons in the</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1209">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* same way as records should not be sent to the external system individually. Rather,</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1228.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* implementers are expected to batch records and only enqueue a single {@link Runnable} per</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1248">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* batch to handle the result.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1267.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1287">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">MailboxExecutor</tspan><tspan x="230" fill="#F8F8F2"> </tspan><tspan x="240" fill="#50FA7B">getMailboxExecutor</tspan><tspan x="420" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1326">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1345.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* Returns a {@link ProcessingTimeService} that can be used to get the current time and</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1365">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* register timers.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1384.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1404">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">ProcessingTimeService</tspan><tspan x="290" fill="#F8F8F2"> </tspan><tspan x="300" fill="#50FA7B">getProcessingTimeService</tspan><tspan x="540" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1443">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/** </tspan><tspan x="120" fill="#FF79C6">@return</tspan><tspan x="190" fill="#6272A4"> </tspan><tspan x="200" fill="#6272A4">The id of task where the writer is. */</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1462.5">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">int</tspan><tspan x="110" fill="#F8F8F2"> </tspan><tspan x="120" fill="#50FA7B">getSubtaskId</tspan><tspan x="240" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1501.5">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/** </tspan><tspan x="120" fill="#FF79C6">@return</tspan><tspan x="190" fill="#6272A4"> </tspan><tspan x="200" fill="#6272A4">The number of parallel Sink tasks. */</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1521">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">int</tspan><tspan x="110" fill="#F8F8F2"> </tspan><tspan x="120" fill="#50FA7B">getNumberOfParallelSubtasks</tspan><tspan x="390" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1560">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/** </tspan><tspan x="120" fill="#FF79C6">@return</tspan><tspan x="190" fill="#6272A4"> </tspan><tspan x="200" fill="#6272A4">The metric group this writer belongs to. */</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1579.5">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">SinkWriterMetricGroup</tspan><tspan x="290" fill="#F8F8F2"> </tspan><tspan x="300" fill="#50FA7B">metricGroup</tspan><tspan x="410" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1618.5">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1638">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* Returns id of the restored checkpoint, if state was restored from the snapshot of a</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1657.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* previous execution.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1677">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1696.5">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">OptionalLong</tspan><tspan x="200" fill="#F8F8F2"> </tspan><tspan x="210" fill="#50FA7B">getRestoredCheckpointId</tspan><tspan x="440" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1735.5">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1755">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* Provides a view on this context as a {@link SerializationSchema.InitializationContext}.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1774.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1794">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#8BE9FD" font-style="italic">SerializationSchema</tspan><tspan x="270" fill="#F8F8F2">.</tspan><tspan x="280" fill="#8BE9FD" font-style="italic">InitializationContext</tspan><tspan x="490" fill="#F8F8F2"> </tspan><tspan x="500" fill="#50FA7B">asSerializationSchemaInitializationContext</tspan><tspan x="920" fill="#F8F8F2">();</tspan>
+</text>
+
+<text font-family="Fira Code" font-size="16" y="1833">
+<tspan x="0" fill="#6272A4">        </tspan><tspan x="80" fill="#6272A4">/**</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1852.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* Returns a metadata consumer, the {@link SinkWriter} can publish metadata events of type</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1872">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* {@link MetaT} to the consumer.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1891.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1911">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* &lt;p&gt;It is recommended to use a separate thread pool to publish the metadata because</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1930.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* enqueuing a lot of these messages in the mailbox may lead to a performance decrease.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1950">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">* thread, and the {@link Consumer#accept} method is executed very fast.</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1969.5">
+<tspan x="0" fill="#6272A4">         </tspan><tspan x="90" fill="#6272A4">*/</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="1989">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#F8F8F2">@</tspan><tspan x="90" fill="#8BE9FD" font-style="italic">Experimental</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="2008.5">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#FF79C6">default</tspan><tspan x="150" fill="#F8F8F2"> </tspan><tspan x="160" fill="#F8F8F2">&lt;MetaT&gt; </tspan><tspan x="240" fill="#8BE9FD" font-style="italic">Optional</tspan><tspan x="320" fill="#F8F8F2">&lt;</tspan><tspan x="330" fill="#8BE9FD" font-style="italic">Consumer</tspan><tspan x="410" fill="#F8F8F2">&lt;MetaT&gt;&gt; </tspan><tspan x="500" fill="#50FA7B">metadataConsumer</tspan><tspan x="660" fill="#F8F8F2">() {</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="2028">
+<tspan x="0" fill="#F8F8F2">            </tspan><tspan x="120" fill="#FF79C6">return</tspan><tspan x="180" fill="#F8F8F2"> </tspan><tspan x="190" fill="#F8F8F2">Optional.</tspan><tspan x="280" fill="#50FA7B">empty</tspan><tspan x="330" fill="#F8F8F2">();</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="2047.5">
+<tspan x="0" fill="#F8F8F2">        </tspan><tspan x="80" fill="#F8F8F2">}</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="2067">
+<tspan x="0" fill="#F8F8F2">    </tspan><tspan x="40" fill="#F8F8F2">}</tspan>
+</text>
+<text font-family="Fira Code" font-size="16" y="2086.5">
+<tspan x="0" fill="#F8F8F2">}</tspan>
+</text></g>
+</svg>

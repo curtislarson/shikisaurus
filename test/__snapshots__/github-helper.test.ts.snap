@@ -1,0 +1,10 @@
+export const snapshot = {};
+
+snapshot[`GithubPermalinkParser 1`] = `
+"  IShikiTheme,
+  IThemeRegistration,
+  StringLiteralUnion
+} from './types'
+import { Resolver } from './resolver'
+import { tokenizeWithTheme } from './themedTokenizer'"
+`;

@@ -1,0 +1,5 @@
+<svg viewBox="0 0 330 97.5" width="330" height="97.5" xmlns="http://www.w3.org/2000/svg">
+<rect id="bg" fill="#000" width="330" height="97.5" rx="4"></rect><g id="tokens" transform="translate(40, 39)"><text font-family="Hack" font-size="16" y="19.5">
+<tspan x="0" fill="#FF79C6">const</tspan><tspan x="50" fill="#F8F8F2"> </tspan><tspan x="60" fill="#F8F8F2">foo</tspan><tspan x="90" fill="#FF79C6">:</tspan><tspan x="100" fill="#F8F8F2"> </tspan><tspan x="110" fill="#8BE9FD" font-style="italic">string</tspan><tspan x="170" fill="#F8F8F2"> </tspan><tspan x="180" fill="#FF79C6">=</tspan><tspan x="190" fill="#F8F8F2"> </tspan><tspan x="200" fill="#E9F284">&quot;</tspan><tspan x="210" fill="#F1FA8C">bar</tspan><tspan x="240" fill="#E9F284">&quot;</tspan>
+</text></g>
+</svg>
