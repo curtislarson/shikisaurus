@@ -15,11 +15,16 @@ const RESPONSE_HEADERS = {
 };
 
 function ignorePath(pathname: string) {
-  return ["/", "", "/favicon.ico"].includes(pathname) || (pathname.indexOf("github.com") === -1);
+  return ["/", ""].includes(pathname) || (pathname.indexOf("github.com") === -1);
 }
 
 export function createShikisaurusApi({ svg, highlighter, githubParser }: ShikisaurusServices) {
   const app = new Hono();
+
+  app.get("/favicon.ico", async (c) => {
+    const icon = await Deno.readFile(new URL("../public/favicon.ico", import.meta.url));
+    return c.body(icon);
+  });
 
   app.get("/*", async (c) => {
     console.log("Request URL:", c.req.url);
