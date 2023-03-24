@@ -1,6 +1,7 @@
 import { Highlighter } from "../deps.ts";
+import { DEFAULT_EXTENSION_TO_LANG_MAP } from "../src/defaults.ts";
 import { SvgRendererService } from "../src/shiki.ts";
-import { Hono } from "./deps.ts";
+import { Hono, extname } from "./deps.ts";
 import { GithubPermalinkParser } from "./github-permalink-parser.ts";
 
 export interface ShikisaurusServices {
@@ -15,7 +16,7 @@ const RESPONSE_HEADERS = {
 };
 
 function ignorePath(pathname: string) {
-  return ["/", ""].includes(pathname) || (pathname.indexOf("github.com") === -1);
+  return ["/", ""].includes(pathname) || pathname.indexOf("github.com") === -1;
 }
 
 export function createShikisaurusApi({ svg, highlighter, githubParser }: ShikisaurusServices) {
@@ -33,9 +34,11 @@ export function createShikisaurusApi({ svg, highlighter, githubParser }: Shikisa
       return c.status(404);
     }
     const codeUrl = decodeURIComponent(pathname.slice(1));
+    const extension = extname(pathname).slice(1);
 
-    const lang = searchParams.get("lang") ?? "ts";
+    const lang = searchParams.get("lang") ?? DEFAULT_EXTENSION_TO_LANG_MAP[extension] ?? "ts";
     const theme = searchParams.get("theme") ?? "dracula";
+    console.log({ lang, theme });
 
     const parsed = await githubParser.processUrl(new URL(codeUrl));
     await highlighter.loadTheme(theme);

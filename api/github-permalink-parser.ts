@@ -50,7 +50,10 @@ export class GithubPermalinkParser {
     } else {
       return {
         // Line numbers are 1 based in github vs 0 based in array api
-        content: content.split("\n").slice(hash.start - 1, hash.end).join("\n"),
+        content: content
+          .split("\n")
+          .slice(hash.start - 1, hash.end)
+          .join("\n"),
         fullContent: content,
       };
     }
@@ -60,17 +63,18 @@ export class GithubPermalinkParser {
     const stringUrl = url.href;
     const matches = Array.from(stringUrl.matchAll(GithubHashRe)).at(0);
 
-    console.log("Found line number hash matches", matches);
-
     if (matches != null) {
+      console.log("Found line number hash matches", matches);
       const startIndex = matches.at(1)!;
       const endIndex = matches.at(2);
       return {
         start: Number(startIndex),
         end: endIndex != null ? Number(endIndex) : undefined,
       };
+    } else {
+      console.log("No line number information found");
+      return null;
     }
-    return null;
   }
 
   /**
@@ -98,12 +102,13 @@ export class GithubPermalinkParser {
 
   async #fetchContent(url: URL) {
     const { owner, repo, ref, path } = this.#extractPermalinkData(url);
+    console.log({ owner, repo, ref, path });
     const { data } = await this.octokit.request("GET /repos/{owner}/{repo}/contents/{path}", {
       owner,
       repo,
       ref,
       path,
-      mediaType: { "format": "raw" },
+      mediaType: { format: "raw" },
     });
     return data as unknown as string;
   }
