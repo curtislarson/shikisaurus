@@ -5,4 +5,4 @@ export { Hono, type Validator } from "https://deno.land/x/hono@v2.7.3/mod.ts";
 export {
   createGithubTokenOctokit,
   type WillTheRealOctokitPleaseStandup,
-} from "https://x.curtis.land/github/src/octokit-token.ts";
+} from "https://git.quack.id/github/src/octokit-token.ts";
